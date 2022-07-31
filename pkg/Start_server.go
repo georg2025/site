@@ -7,6 +7,7 @@ import (
   "net/http"
   "path/filepath"
   "os"
+  "html/template"
   _ "github.com/go-sql-driver/mysql"
   "site/pkg/models/mySQL"
 )
@@ -15,6 +16,7 @@ type application struct {
   errorLog *log.Logger
   infoLog  *log.Logger
   add1 *mysql.Add1Model
+  templateCache map[string]*template.Template
 }
 
 func Start() {
@@ -34,11 +36,19 @@ func Start() {
     }
     //на всякий пожарный - дефер
     defer db.Close()
+    // Кэш для хранения шаблонов
+    templateCache, err := newTemplateCache("./ui/html/")
+    if err != nil {
+        errorLog.Fatal(err)
+    }
+
+
     //Структура для логгеров
     app := &application{
       errorLog: errorLog,
       infoLog:  infoLog,
       add1: &mysql.Add1Model{DB: db},
+      templateCache: templateCache,
     }
 
 

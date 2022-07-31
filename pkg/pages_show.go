@@ -5,7 +5,7 @@ import (
   "strconv"
   "net/http"
   "fmt"
-  "html/template"
+  //"html/template"
   "site/pkg/models"
 
 )
@@ -17,23 +17,17 @@ func (app *application) Home (w http.ResponseWriter, r *http.Request) {
     app.notFound(w)
     return
   }
-  files:=[]string {
-    "./ui/html/main_page.tmpl",
-    "./ui/html/bricks/carousel.tmpl",
-    "./ui/html/bricks/sidebar.tmpl",
-    "./ui/html/bricks/header.tmpl",
-    "./ui/html/bricks/footer.tmpl",
-    "./ui/html/bricks/latest_ad.tmpl",
-    "./ui/html/bricks/featured.tmpl",
-  }
-  ts, err := template.ParseFiles(files...)
-	if err != nil {
+  s, err := app.add1.Latest()
+  if err != nil {
     app.serverError(w, err)
+    return
   }
-	err = ts.Execute(w, nil)
-	if err != nil {
-    app.serverError(w, err)
-	}
+  // Используем помощника render() для отображения шаблона.
+  app.render(w, r, "main.page.tmpl", &templateData{
+      Add2: s,
+    })
+
+
 }
 
 //страница для создания объявления. Метод - только post
@@ -44,7 +38,7 @@ func (app *application) Ad_create(w http.ResponseWriter, r *http.Request) {
         app.clientError(w, http.StatusMethodNotAllowed)
         return
     }
-    // Создаем несколько переменных, содержащих тестовые данные. Мы удалим их позже.
+    // Это тестовые данные. Нужно удалить, как нормально сделаю мето пост.
   	title := "История про улитку"
   	content := "Улитка выползла из раковины,\nвытянула рожки,\nи опять подобрала их."
   	expired := "7"
@@ -84,27 +78,9 @@ func (app *application) Show_ad(w http.ResponseWriter, r *http.Request) {
         }
         return
     }
-    data := &templateData{Add1: s}
-    // Инициализируем срез, содержащий путь к файлу show_ad.tmpl
-    files := []string{
-        "./ui/html/show_ad.tmpl",
-        "./ui/html/bricks/sidebar.tmpl",
-        "./ui/html/bricks/header.tmpl",
-        "./ui/html/bricks/footer.tmpl",
-    }
-
-    // Парсинг файлов шаблонов...
-    ts, err := template.ParseFiles(files...)
-    if err != nil {
-        app.serverError(w, err)
-        return
-    }
-
-    // А затем выполняем их.
-    err = ts.Execute(w, data)
-    if err != nil {
-        app.serverError(w, err)
-    }
+    app.render(w, r, "show_ad.page.tmpl", &templateData{
+       Add1: s,
+   })
 
 }
 
