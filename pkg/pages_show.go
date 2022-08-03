@@ -39,10 +39,10 @@ func (app *application) Ad_create(w http.ResponseWriter, r *http.Request) {
         return
     }
     // Это тестовые данные. Нужно удалить, как нормально сделаю мето пост.
-  	title := "История про улитку"
-  	content := "Улитка выползла из раковины,\nвытянула рожки,\nи опять подобрала их."
-  	expired := "7"
-    adress := "Вологда"
+  	title := "Привет"
+  	content := "Привет\nПока\nВсего хорошего."
+  	expired := "9"
+    adress := "Смоленск"
     var region uint8
     region = 22
     price := 410000
